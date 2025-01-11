@@ -54,7 +54,7 @@ sheet = client.open("Suscripciones").sheet1  # Hoja principal
 TOKEN = "8088624985:AAGRMvD7kiUS0LNNN2_fhUvU0sxIxk0mqj8"
 ADMIN_IDS = [7786874724]  # Lista de administradores (puedes añadir más IDs)
 GRUPO_EXCLUSIVO = -1002322290251  # ID del grupo/canal privado
-CANAL_ID = -1002258332834  # Cambia esto por el username del canal
+CANAL_ID = -1002442455901  # Cambia esto por el username del canal
 BOT_USERNAME = "lilit_rousebot"  # Bot al que redirigirá el botón
 
 
