@@ -21,6 +21,7 @@ import asyncio
 
 
 
+
 # --- Configuración de Google Drive ---
 def autenticar_google_drive():
     SCOPES = ["https://www.googleapis.com/auth/drive.file"]
@@ -196,10 +197,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def recibir_comprobante(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # Verificar si el evento contiene un mensaje
+    if not update.message:
+        print("❌ Error: La actualización no contiene un mensaje válido.")
+        return
+
     user = update.effective_user
 
     # Verificar que el usuario no sea None
-    if user is None:
+    if not user:
         await update.message.reply_text("❌ Error: No se pudo identificar al usuario.")
         return
 
@@ -223,7 +229,7 @@ async def recibir_comprobante(update: Update, context: ContextTypes.DEFAULT_TYPE
         )
 
         # Notificar a los administradores
-        for admin_id in ADMIN_IDS:  # Lista de administradores
+        for admin_id in ADMIN_IDS:
             try:
                 await context.bot.send_photo(
                     chat_id=admin_id,
@@ -232,8 +238,7 @@ async def recibir_comprobante(update: Update, context: ContextTypes.DEFAULT_TYPE
                         f"📤 *Nuevo comprobante recibido*\n\n"
                         f"👤 Usuario: @{username} (ID: {user_id})\n"
                         "Estado: Pendiente de verificación."
-                        "⚠️ Usa:  /confirmar "
-                        "para aprobar este pago."
+                        "⚠️ Usa:  /confirmar <ID> para aprobar este pago."
                     ),
                     parse_mode="Markdown"
                 )
