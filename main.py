@@ -21,7 +21,6 @@ import asyncio
 
 
 
-
 # --- Configuración de Google Drive ---
 def autenticar_google_drive():
     SCOPES = ["https://www.googleapis.com/auth/drive.file"]
@@ -52,7 +51,7 @@ sheet = client.open("Suscripciones").sheet1  # Hoja principal
 
 # --- Configuración del bot ---
 TOKEN = "8088624985:AAGRMvD7kiUS0LNNN2_fhUvU0sxIxk0mqj8"
-ADMIN_IDS = [7786874724]  # Lista de administradores (puedes añadir más IDs)
+ADMIN_IDS = [7786874724,6380669463,7130814268,5453322412]  # Lista de administradores (puedes añadir más IDs)
 GRUPO_EXCLUSIVO = -1002322290251  # ID del grupo/canal privado
 CANAL_ID = -1002442455901  # Cambia esto por el username del canal
 BOT_USERNAME = "lilit_rousebot"  # Bot al que redirigirá el botón
@@ -125,7 +124,7 @@ async def enviar_mensaje_comando(update: Update, context: ContextTypes.DEFAULT_T
     if user_id not in ADMIN_IDS:
         await update.message.reply_text("❌ No tienes permiso para usar este comando.")
         return
-
+# Llamar a la función que envía el mensaje al canal
     # Llamar a la función que envía el mensaje al canal
     await enviar_mensaje_diario(context)
     await update.message.reply_text("✅ El mensaje se ha enviado manualmente al canal.")       
@@ -167,28 +166,52 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Enviar mensaje de bienvenida
     with open("bienvenida.jpg", "rb") as photo:
         await update.message.reply_photo(photo, caption=(
-            f"¡Hola, {username}! 🌸 Bienvenida al bot oficial.\n\n"
-            "🔔 *Canal público:* [Contenido Gratuito y Actualizaciones](https://t.me/+CHFeyLpDwlkzNTg5).\n\n"
-            "🎀 *Accede al contenido exclusivo suscribiéndote, Tus beneficios al unirte son un video exclusivo de bienvenida\n"
-            "🎉🎊Al segundo mes escribo tu nombre en mis nalgas🍑\n"
-            "El tercer mes un video con tu nombre👀 *\n"
+            f"¡Hola, {username}! 🌸 Bienvenid@ a nuestro procesador de pagos.\n\n"
+            "🔔 *Canal público:* [Contenido Gratuito y Actualizaciones](https://t.me/Lilit_R0se).\n\n"
+            "🎀 *Accede al contenido exclusivo suscribiéndote*\n"
             "💎 1 Mes - S/ 30\n"
             "✨ 3 Meses - S/ 80\n"
             "🎉 12 Meses - S/ 260\n\n"
             "🎉 VITALICIO - S/ 500\n\n"
-            "💰 Métodos de pago:\n"
+            "💰 Métodos de pago para PERU:\n"
             "1️⃣ *Yape*: 988133711\n"
             "2️⃣ *Plin*: 988133711\n"
-            "3️⃣ *PayPal*: [Tu enlace de PayPal](https://paypal.me/tulink)"
-        ), parse_mode="Markdown")
-
-    # Esperar un momento antes de enviar la imagen adicional
-    import asyncio
-    await asyncio.sleep(1)  # Espera de 1 segundo
+            ), parse_mode="Markdown")
 
     # Enviar la imagen adicional
     with open("imagen_final.jpg", "rb") as imagen_final:
         await update.message.reply_photo(imagen_final)
+
+
+     # Esperar un momento antes de enviar las opciones de PayPal
+    import asyncio
+    await asyncio.sleep(1)  # Espera de 1 segundo
+
+
+    # Crear botones de pago con PayPal
+    botones_paypal = InlineKeyboardMarkup([
+        [InlineKeyboardButton("Mensual - $10", url="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-0LY583665W194821XM6B4ZEA")],
+        [InlineKeyboardButton("3 Meses - $22", url="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-0UV30168C76716028M6B42ZY")],
+        [InlineKeyboardButton("Anual - $70", url="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-7PL63532BL645082FM6B435I")],
+        [InlineKeyboardButton("Vitalicio - $135", url="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-15P67236JF6512136M6B4X7Q")],
+    ])
+
+    # Esperar un momento antes de enviar las opciones de PayPal
+    import asyncio
+    await asyncio.sleep(1)  # Espera de 1 segundo
+
+    # Enviar los botones de pago con PayPal
+    await update.message.reply_text(
+        "💳 *Opciones de Pago con PayPal*:\n\n"
+        "RECUERDA ENVIAR UNA CAPTURA UNA VEZ REALIZADO TU PAGO:\n\n"
+        "Elige el plan que más te convenga 👇",
+        reply_markup=botones_paypal,
+        parse_mode="Markdown"
+    )
+     # Esperar un momento antes de enviar las opciones de PayPal
+    import asyncio
+    await asyncio.sleep(1)  # Espera de 1 segundo
+
 
     # Enviar el mensaje final sobre el comprobante
     await update.message.reply_text(
@@ -196,16 +219,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def recibir_comprobante(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # Verificar si el evento contiene un mensaje
-    if not update.message:
-        print("❌ Error: La actualización no contiene un mensaje válido.")
-        return
 
+
+
+
+
+
+
+async def recibir_comprobante(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
 
     # Verificar que el usuario no sea None
-    if not user:
+    if user is None:
         await update.message.reply_text("❌ Error: No se pudo identificar al usuario.")
         return
 
@@ -229,7 +254,7 @@ async def recibir_comprobante(update: Update, context: ContextTypes.DEFAULT_TYPE
         )
 
         # Notificar a los administradores
-        for admin_id in ADMIN_IDS:
+        for admin_id in ADMIN_IDS:  # Lista de administradores
             try:
                 await context.bot.send_photo(
                     chat_id=admin_id,
@@ -238,7 +263,8 @@ async def recibir_comprobante(update: Update, context: ContextTypes.DEFAULT_TYPE
                         f"📤 *Nuevo comprobante recibido*\n\n"
                         f"👤 Usuario: @{username} (ID: {user_id})\n"
                         "Estado: Pendiente de verificación."
-                        "⚠️ Usa:  /confirmar <ID> para aprobar este pago."
+                        "⚠️ Usa:  /confirmar "
+                        "para aprobar este pago."
                     ),
                     parse_mode="Markdown"
                 )
